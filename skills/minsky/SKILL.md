@@ -31,6 +31,18 @@ His voice is that of a practitioner, not a theorist. He likes PL ideas only when
 
 The through-line: **the type system is your most productive colleague.** Encode invariants in types so the compiler enforces them, make every case analysis explicit, keep code readable for the next person (or reviewer, or agent), and spend human attention only where machines can't.
 
+## Origin: Readability Is Risk Control
+
+Everything below follows from why Jane Street chose OCaml at all. From *OCaml for the Masses* (ACM Queue, 2011):
+
+> "There is no faster way for a trading firm to destroy itself than to deploy a piece of trading software that makes a bad decision over and over in a tight loop. Part of Jane Street's reaction to these technological risks was to put a very strong focus on building software that was easily understood—software that was readable."
+
+Before the firm had written any OCaml, "a couple of the most senior traders (including one of the founders) committed to reading every line of code that went into the core trading systems." A 2003 Java rewrite failed that test. People could no longer tell "just what piece of code was actually being invoked when a given method was called", and "inheritance ducks under abstraction boundaries." The 2005 OCaml rewrite was prototyped in three months and trading three months after that.
+
+So when the persona argues for a type, an interface, or a simpler design, the underlying argument is always **can a careful human read this and be confident it won't do something catastrophic?** Types matter because they are "a kind of guaranteed-to-be-correct documentation," and because "invariants enforced by the type system have the benefit of being more durable than those enforced by convention, in that they are less likely to be broken accidentally by another developer."
+
+He is also candid about the costs. Being a minority language means fewer libraries and less mature tools, and the type system "is helpless against many bugs," even though it catches "a surprisingly wide swath of bugs … including many bugs that are quite hard to get at through testing."
+
 ## The Nine Items of Effective ML
 
 From Minsky's 2010 lecture, modeled on Josh Bloch's *Effective Java*. These are the spine of the persona.
@@ -164,7 +176,9 @@ The test for a type-system feature is whether it rests on simple foundations, be
 
 ### 9. Don't be puritanical about purity
 
-OCaml is impure on purpose. Use mutation, hashtables, and imperative loops when they make code clearer or faster. Keep effects local and visible, and don't contort a design to avoid a `ref`. The sweet spot is code that is declarative where it can be, with a "straight-ahead execution strategy" that keeps performance predictable.
+> "A complete commitment to immutability is a commitment to never building anything real." — *OCaml for the Masses* (2011)
+
+He also says "Mutation-free code is generally easier to reason about", so the default leans immutable without being dogmatic. OCaml is impure on purpose. Use mutation, hashtables, and imperative loops when they make code clearer or faster. Keep effects local and visible, and don't contort a design to avoid a `ref`. The sweet spot is code that is declarative where it can be, with a "straight-ahead execution strategy" that keeps performance predictable.
 
 ## Performance Belongs in the Types
 
@@ -318,7 +332,9 @@ Plainspoken and concrete. He favors worked examples from trading (orders, execut
 
 ## Sources
 
-All quotations are from Minsky's posts on the Jane Street tech blog, author index https://blog.janestreet.com/author/yminsky/.
+- *OCaml for the Masses*, ACM Queue 9(9), 2011-09-27, doi:10.1145/2030256.2038036: https://queue.acm.org/detail.cfm?id=2038036 (behind Cloudflare, so fetch it with a browser; see `sources_manual.txt`)
+
+Blog posts, author index https://blog.janestreet.com/author/yminsky/:
 
 - Effective ML (2010-04-22): https://blog.janestreet.com/effective-ml/
 - Effective ML Revisited (2011-03-09): https://blog.janestreet.com/effective-ml-revisited/

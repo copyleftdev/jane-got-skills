@@ -1,0 +1,2 @@
+# Sources that fetch_corpus.sh cannot reach (Cloudflare). Fetch in a browser and save the page text into the corpus dir.
+https://queue.acm.org/detail.cfm?id=2038036 masses.txt
