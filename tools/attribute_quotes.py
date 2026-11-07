@@ -9,7 +9,7 @@ import os
 import re
 import sys
 
-TURN = re.compile(r"(\d{1,2}:\d{2}(?::\d{2})?(?:\.\d+)?) ([a-z]+) ")
+TURN = re.compile(r"(\d{1,2}:\d{1,2}(?::\d{2})?(?:\.\d+)?) ([a-z]+) ")
 
 
 def norm(s):

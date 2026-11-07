@@ -1,0 +1,5 @@
+getting-from-tested-to-battle-tested
+https://www.janestreet.com/tech-talks/building-an-exchange/
+https://www.janestreet.com/tech-talks/safe-at-any-speed/
+https://www.janestreet.com/tech-talks/system-jitter-and-where-to-find-it/
+https://www.janestreet.com/tech-talks/production-engineering-when-trading-billions-of-dollars-a-day/
