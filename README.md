@@ -9,6 +9,13 @@ talks, papers, open source, and the Signals and Threads podcast.
 Personas encode a person's *published* engineering philosophy. Every principle
 traces to a public source; nothing private is collected.
 
+## Skills
+
+| Skill | Kind | Grounding | Gate |
+|---|---|---|---|
+| `skills/minsky` (`minsky-effective-ml`) | persona | ~20 blog posts, ACM Queue 2011, 8 Signals and Threads episodes | quote gate: 60/60 verbatim |
+| `skills/hardcaml` (`hardcaml-design`) | practice | Jane Street's MIT agent prompts (vendored), template project, opam repos | `scripts/tests/test_lint.py`; linter clean on template + own examples |
+
 ## Quote gate
 
 Every quotation in a persona must appear verbatim in its public source.
