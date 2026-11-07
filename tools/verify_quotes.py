@@ -13,7 +13,8 @@ import sys
 def norm(s):
     for a, b in (("’", "'"), ("‘", "'"), ("“", '"'), ("”", '"'), ("…", "...")):
         s = s.replace(a, b)
-    return re.sub(r"\s+", " ", s.replace("`", "")).strip().lower()
+    s = re.sub("[\"'\u2018\u2019\u201c\u201d]", "'", s.replace("`", ""))
+    return re.sub(r"\s+", " ", s).strip().lower()
 
 
 corpus = norm(" ".join(open(f, errors="replace").read() for f in glob.glob(sys.argv[1] + "/*.txt")))

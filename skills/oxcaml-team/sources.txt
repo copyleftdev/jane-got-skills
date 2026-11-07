@@ -1,0 +1,6 @@
+introducing-oxcaml
+applied-PL-research
+memory-allocator-showdown
+oxidizing-ocaml-locality
+oxidizing-ocaml-ownership
+oxidizing-ocaml-parallelism
