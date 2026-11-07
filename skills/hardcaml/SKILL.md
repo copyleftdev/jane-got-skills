@@ -1,6 +1,6 @@
 ---
 name: hardcaml-design
-description: Design, simulate, and test FPGA/ASIC hardware in Hardcaml, Jane Street's OCaml hardware construction library, following Jane Street's own published agent guidelines. Covers module structure (I/O interfaces, Config functors, hierarchical instantiation), the Signal vs Always API split, signal naming with let%hw, operator precedence and signedness traps, constants and resizing, muxing idioms, and testbenches (Lws on OxCaml, Cyclesim_harness on stock OCaml) with expect tests and ASCII waveforms. Ships a linter for the patterns the guidelines ban. Use when writing or reviewing Hardcaml, porting Verilog/VHDL designs to Hardcaml, writing Hardcaml testbenches, or generating RTL from OCaml.
+description: Design, simulate, and test FPGA/ASIC hardware in Hardcaml, Jane Street's OCaml hardware construction library, following Jane Street's own published agent guidelines. Covers module structure (I/O interfaces, Config functors, hierarchical instantiation), the Signal vs Always API split, signal naming with let%hw, operator precedence and signedness traps, constants and resizing, muxing idioms, and testbenches (Lws or Cyclesim_harness on OxCaml, plain Cyclesim on stock OCaml, chosen by an explicit toolchain check) with expect tests and ASCII waveforms. Ships a linter for the patterns the guidelines ban. Use when writing or reviewing Hardcaml, porting Verilog/VHDL designs to Hardcaml, writing Hardcaml testbenches, or generating RTL from OCaml.
 ---
 
 # Hardcaml Design
