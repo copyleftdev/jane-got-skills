@@ -1,0 +1,3 @@
+# Not fetchable by URL; copy into the corpus dir before running verify_quotes.py:
+# gc.mli from the OCaml 5.4 stdlib ($(ocamlc -where)/gc.mli) as gc_mli.txt
+# memtrace.mli from the installed memtrace 0.2.3 as memtrace_mli.txt

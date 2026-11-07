@@ -1,0 +1,5 @@
+finding-memory-leaks-with-memtrace
+magic-trace
+https://raw.githubusercontent.com/janestreet/memtrace/master/README.md
+https://www.janestreet.com/tech-talks/safe-at-any-speed/
+https://www.janestreet.com/tech-talks/system-jitter-and-where-to-find-it/

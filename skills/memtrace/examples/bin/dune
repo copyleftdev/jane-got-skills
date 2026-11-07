@@ -1,0 +1,3 @@
+(executables
+ (names live workload)
+ (libraries memtrace memtrace_live))

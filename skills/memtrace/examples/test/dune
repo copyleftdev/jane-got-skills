@@ -1,0 +1,6 @@
+(library
+ (name memtrace_live_test)
+ (libraries memtrace memtrace_live)
+ (inline_tests)
+ (preprocess
+  (pps ppx_expect)))
