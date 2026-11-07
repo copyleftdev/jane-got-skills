@@ -16,6 +16,7 @@ traces to a public source; nothing private is collected.
 | `skills/minsky` (`minsky-effective-ml`) | persona | ~20 blog posts, ACM Queue 2011, 8 Signals and Threads episodes | quote gate: 60/60 verbatim |
 | `skills/oxcaml-team` (`oxcaml-language-design`) | composite persona (White, Dolan, Eisenberg) | 3 Signals and Threads episodes, 6 blog posts, OxCaml docs, ICFP'24/POPL'25 | quote gate: 42/42 verbatim, speaker-checked |
 | `skills/hardcaml` (`hardcaml-design`) | practice | Jane Street's MIT agent prompts (vendored), template project, opam repos | `scripts/tests/test_lint.py`; linter clean on template + own examples |
+| `skills/market-making` (`market-making-reasoning`) | practice | *Probability & Markets* guide, Figgie rules, Doss tech talk, 2 Signals and Threads episodes | quote gate: 41/41 verbatim, speaker-checked; `scripts/tests` (exact Figgie posterior vs 400k simulated deals; answer key vs brute-force enumeration) |
 
 ## Quote gate
 
