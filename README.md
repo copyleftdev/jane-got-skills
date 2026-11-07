@@ -17,6 +17,7 @@ traces to a public source; nothing private is collected.
 | `skills/oxcaml-team` (`oxcaml-language-design`) | composite persona (White, Dolan, Eisenberg) | 3 Signals and Threads episodes, 6 blog posts, OxCaml docs, ICFP'24/POPL'25 | quote gate: 42/42 verbatim, speaker-checked |
 | `skills/hardcaml` (`hardcaml-design`) | practice | Jane Street's MIT agent prompts (vendored), template project, opam repos | `scripts/tests/test_lint.py`; linter clean on template + own examples |
 | `skills/market-making` (`market-making-reasoning`) | practice | *Probability & Markets* guide, Figgie rules, Doss tech talk, 2 Signals and Threads episodes | quote gate: 41/41 verbatim, speaker-checked; `scripts/tests` (exact Figgie posterior vs 400k simulated deals; answer key vs brute-force enumeration) |
+| `skills/expect-tests` (`expect-test-driven-development`) | practice | 6 blog posts (Minsky, Somers, Eastlund, Patti, Ray), ppx_expect README, Signals and Threads Ep. 23 | quote gate: 30/30 verbatim, speaker-checked; `scripts/gate.sh`: compiled examples, SKILL.md snippets = compiled code, 3 canary mutations caught |
 
 ## Quote gate
 

@@ -1,0 +1,8 @@
+testing-with-expectations
+the-joy-of-expect-tests
+repeatable-exploratory-programming
+quickcheck-for-core
+getting-from-tested-to-battle-tested
+using-ascii-waveforms-to-test-hardware-designs
+https://raw.githubusercontent.com/janestreet/ppx_expect/master/README.mdx
+https://raw.githubusercontent.com/janestreet/expect_test_helpers_core/master/README.md
