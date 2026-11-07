@@ -26,13 +26,16 @@ The guidelines track the newest Hardcaml (v0.18 preview) on Jane Street's OxCaml
 | Toolchain | Hardcaml | Guideline APIs (`let%hw`, `of_unsigned_int`, `to_unsigned_int`, `uextend`, `cut_through_reg`) | `hardcaml_test_harness` | `hardcaml_lws` | Testbench to write |
 |---|---|---|---|---|---|
 | **OxCaml**: switch `5.2.0+ox`, packages from `oxcaml/opam-repository` (Jane Street's recommended setup) | v0.18 preview | yes | yes | yes | **Lws** via `Lws_harness`, with `(h @ local)` and `[@nontail]` as the guideline shows |
-| **Stock OCaml + `janestreet-bleeding`** (`opam repo add janestreet-bleeding https://github.com/janestreet/opam-repository.git`) | v0.18 preview | yes | **no** | **no** | Plain `Cyclesim.With_interface` + `Cyclesim.Waveform` (template C below), with no mode annotations |
+| **Stock OCaml + `janestreet-bleeding`** (`opam repo add janestreet-bleeding https://github.com/janestreet/opam-repository.git`), on an opam-built `ocaml-base-compiler` 5.4 | v0.18 preview | yes | **no** | **no** | Plain `Cyclesim.With_interface` + `Cyclesim.Waveform` (template C below), with no mode annotations |
 | **Stock OCaml, default opam** | v0.17.1 | **no**: `of_int`, `--` naming, no `let%hw` | no | no | Plain Cyclesim. The guideline's API rules don't apply, so lint with `--skip H002,H004` |
 
 Verified 2026-11-07 against the three opam repositories and the v0.17.1 source:
 
 - `hardcaml_template_project` itself requires the first row. Its tests use `hardcaml_test_harness`, and its README says to install OxCaml.
 - On GitHub, the OxCaml version of each Hardcaml repo lives on the `oxcaml` branch. `hardcaml_lws`'s `master` is a README stub.
+- The second row was built and run on 2026-11-07, with Hardcaml `v0.18~preview.133.03+642` on `ocaml-base-compiler.5.4.0`. `examples/` passes there, and `scripts/gate.sh` re-checks it. Two traps came up while setting it up:
+  - **Stale package lists.** The preview needs `ppxlib >= 0.39.0`, released 2026-10-07. With stale opam metadata, the solver either fails or silently falls back to v0.17.1. Run `opam update` first, and check that `opam list hardcaml` says `v0.18~preview`.
+  - **`ocaml-system` on Ubuntu.** On an `ocaml-system` switch, `odoc-parser` (pulled in by `ppx_js_style`) fails with `Unbound module Stream`. The build picks up Ubuntu's `libcamlp-streams-ocaml` from `/usr/lib/ocaml`, which ships no `.cmi` files. Use `ocaml-base-compiler`, which does not see the system's OCaml libraries.
 
 If the project is on v0.17.1, tell the user that the guidelines target a newer Hardcaml, and recommend OxCaml before writing much code. Porting later means touching every constant, conversion, and signal name.
 
@@ -176,6 +179,7 @@ Hardcaml testbenches are expect tests. Print values as sexps (`Bits.Hex.t`, `Bit
 
 **A. OxCaml (Lws, the guideline default):**
 
+<!-- snippet: uncompiled needs OxCaml (local modes, hardcaml_test_harness, hardcaml_lws) -->
 ```ocaml
 module Harness = Hardcaml_test_harness.Lws_harness.Make (Dut.I) (Dut.O)
 
@@ -194,6 +198,7 @@ Use `Lws.spawn` for concurrent drivers and monitors, and `Lws.step_until_some` t
 
 **B. OxCaml, Cyclesim_harness (as in the template project, for direct port poking):**
 
+<!-- snippet: uncompiled needs OxCaml (hardcaml_test_harness) -->
 ```ocaml
 module Harness = Cyclesim_harness.Make (Dut.I) (Dut.O)
 
@@ -234,9 +239,34 @@ let%expect_test "accumulates" =
   Cyclesim.cycle sim;
   print_s [%message (Bits.to_unsigned_int !(outputs.result.value) : int)];
   Hardcaml_waveterm.Waveform.print ~display_rules waves;
-  [%expect {| ... |}]
+  [%expect {|
+    ("Bits.to_unsigned_int (!((outputs.result).value))" 42)
+    ┌Signals────────┐┌Waves──────────────────────────────────────────────┐
+    │clear          ││                                                   │
+    │               ││────────                                           │
+    │clock          ││────┐                                              │
+    │               ││    └───                                           │
+    │               ││────────                                           │
+    │data_in        ││ 42                                                │
+    │               ││────────                                           │
+    │data_in_valid  ││────────                                           │
+    │               ││                                                   │
+    │result$valid   ││                                                   │
+    │               ││────────                                           │
+    │               ││────────                                           │
+    │result$value   ││ 0                                                 │
+    │               ││────────                                           │
+    │               ││────────                                           │
+    │data_q         ││ 0                                                 │
+    │               ││────────                                           │
+    │valid_q        ││                                                   │
+    │               ││────────                                           │
+    └───────────────┘└───────────────────────────────────────────────────┘
+    |}]
 ;;
 ```
+
+**Before or after the edge.** In this test, the `print_s` reports 42 while the waveform shows `result$value` as 0 in the same cycle, and both are right. `Cyclesim.outputs` defaults to `~clock_edge:After` (`cyclesim.ml`), so it reads the register after it loaded. The waveform samples the cycle before the edge. When a printed value and a wave disagree by exactly one cycle, check which edge each one read before you suspect the design.
 
 Testbench rules for all three:
 
@@ -274,6 +304,14 @@ The linter is line-based, so it is a floor, not a proof. Its rules and what each
 It ignores strings and nested multi-line comments. It cannot see operator mixing that spans lines, `@@` on a lone `mux2`, or Signal-vs-Always placement, so review those by hand against the table in Step 3.
 
 **Calibration (2026-11-07):** `hardcaml_template_project` → 0 findings. `hardcaml_circuits`, which predates the agent guidelines → 174 findings across 159 files, including 92 `of_int_trunc`. Every H008 hit was inspected and is a real unparenthesized mix, such as `x &: y |: (x &: z)` in `add.ml`. Expect findings when linting older Hardcaml code. Fix them in code you are changing, and don't mass-rewrite code you aren't.
+
+**This skill's own gate:** `scripts/gate.sh [switch]` (default `hardcaml-bleeding`) runs four checks:
+- the linter's tests;
+- the linter over `examples/`;
+- `dune runtest` in `examples/`;
+- `tools/check_snippets.py`, which confirms every `ocaml` block in this file is the compiled code.
+
+Templates A and B are marked as uncompiled because they need OxCaml, and the gate reports them as skipped. A canary that removes the register's `~enable` must fail the hold test as an expect diff.
 
 ## Corrections to the Upstream Guidelines
 

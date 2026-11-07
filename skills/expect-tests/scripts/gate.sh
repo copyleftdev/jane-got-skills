@@ -11,7 +11,7 @@ echo "== examples: dune runtest"
 run "$here/examples" > /dev/null || { run "$here/examples" | head -60; echo "FAIL: examples"; exit 1; }
 
 echo "== snippets"
-python3 -I "$here/scripts/check_snippets.py" "$here/SKILL.md" "$here/examples"
+python3 -I "$here/../../tools/check_snippets.py" "$here/SKILL.md" "$here/examples"
 
 mutate() {
   local name=$1 file=$2 from=$3 to=$4 tmp
