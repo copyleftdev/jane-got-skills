@@ -1025,6 +1025,7 @@ Transcripts are on each episode page. Bullets paraphrase the episode; quoted tex
   - About 13 questions in about 30 minutes.
   - Answers are *intervals*, with a cap on total submissions (commonly 18).
   - A correct interval scores ⌈max/min⌉. Missing or wrong intervals double the score exponentially. Lowest score wins.
+  - **Correction (2026-11-07):** the official formula on estimathon.com/how-to-play (an image) uses a **floor**: (10 + Σ_good ⌊max/min⌋) · 2^(13 − #good). Jane Street runs it ("Since debuting the Estimathon in 2013, Jane Street has run hundreds of Estimathon contests"), so the rules are [V], not [S]. See skills/calibrated-estimation.
 - **Skill value:** calibrated interval estimation, and deciding how to spend a limited number of guesses across questions. This pairs with §5.1's confidence intervals.
 
 ### 5.4 Jane Street puzzles archive [V]
