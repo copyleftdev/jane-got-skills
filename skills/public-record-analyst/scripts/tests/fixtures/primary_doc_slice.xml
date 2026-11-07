@@ -1,0 +1,6 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!-- Generated for tests from the 30-row slice; NOT the real cover page (which says 14718 rows). -->
+<edgarSubmission xmlns="http://www.sec.gov/edgar/thirteenffiler">
+  <formData><coverPage><reportCalendarOrQuarter>06-30-2026</reportCalendarOrQuarter></coverPage>
+  <summaryPage><tableEntryTotal>30</tableEntryTotal><tableValueTotal>282004615</tableValueTotal></summaryPage></formData>
+</edgarSubmission>
