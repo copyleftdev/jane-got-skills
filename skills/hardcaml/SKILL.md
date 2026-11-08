@@ -179,7 +179,6 @@ Hardcaml testbenches are expect tests. Print values as sexps (`Bits.Hex.t`, `Bit
 
 **A. OxCaml (Lws, the guideline default):**
 
-<!-- snippet: uncompiled needs OxCaml (local modes, hardcaml_test_harness, hardcaml_lws) -->
 ```ocaml
 module Harness = Hardcaml_test_harness.Lws_harness.Make (Dut.I) (Dut.O)
 
@@ -190,7 +189,7 @@ let%expect_test "accumulates" =
     inputs.data_in_valid := vdd;
     Lws.step h;
     print_s [%message (!(outputs.after_edge.result.value) : Bits.Unsigned_int.t)]);
-  [%expect {| ... |}]
+  [%expect {| ("!(((outputs.after_edge).result).value)" 16'd42) |}]
 ;;
 ```
 
@@ -198,7 +197,6 @@ Use `Lws.spawn` for concurrent drivers and monitors, and `Lws.step_until_some` t
 
 **B. OxCaml, Cyclesim_harness (as in the template project, for direct port poking):**
 
-<!-- snippet: uncompiled needs OxCaml (hardcaml_test_harness) -->
 ```ocaml
 module Harness = Cyclesim_harness.Make (Dut.I) (Dut.O)
 
@@ -215,7 +213,7 @@ let%expect_test "accumulates" =
     inputs.data_in_valid := Bits.vdd;
     Cyclesim.cycle sim;
     print_s [%message (Bits.to_unsigned_int !(outputs.result.value) : int)]);
-  [%expect {| ... |}]
+  [%expect {| ("Bits.to_unsigned_int (!((outputs.result).value))" 42) |}]
 ;;
 ```
 
@@ -305,13 +303,19 @@ It ignores strings and nested multi-line comments. It cannot see operator mixing
 
 **Calibration (2026-11-07):** `hardcaml_template_project` → 0 findings. `hardcaml_circuits`, which predates the agent guidelines → 174 findings across 159 files, including 92 `of_int_trunc`. Every H008 hit was inspected and is a real unparenthesized mix, such as `x &: y |: (x &: z)` in `add.ml`. Expect findings when linting older Hardcaml code. Fix them in code you are changing, and don't mass-rewrite code you aren't.
 
-**This skill's own gate:** `scripts/gate.sh [switch]` (default `hardcaml-bleeding`) runs four checks:
+**This skill's own gates.**
+
+`scripts/gate_oxcaml.sh [switch]` (default `5.2.0+ox`) compiles and runs templates A and B on OxCaml with Hardcaml `v0.18~preview.130.106`. Both print 42 after one cycle. A canary that drives 41 must be caught. Two OxCaml-switch findings are behind how it works:
+- **The runner is invoked by hand.** There, `dune runtest` crashes with `Sys_error "./../<file>.ml"`, because the runner gets `-source-tree-root ..` while the ppx recorded bare file names. The script runs the runner from the test directory with `-source-tree-root .`. That ppx_expect writes a `.corrected` file on every run, so a pass means exit 0 *and* every `.corrected` identical to its source.
+- **Waveform text depends on the Hardcaml version.** The same one-cycle test draws the clock across the whole display on `130.106`, but as a single cycle on `133.03`. Keep expect files with waveforms on one toolchain, and don't share them between switches.
+
+`scripts/gate.sh [switch]` (default `hardcaml-bleeding`) runs four checks:
 - the linter's tests;
 - the linter over `examples/`;
 - `dune runtest` in `examples/`;
 - `tools/check_snippets.py`, which confirms every `ocaml` block in this file is the compiled code.
 
-Templates A and B are marked as uncompiled because they need OxCaml, and the gate reports them as skipped. A canary that removes the register's `~enable` must fail the hold test as an expect diff.
+Templates A and B are verified by `gate_oxcaml.sh` instead, because they need OxCaml. A canary that removes the register's `~enable` must fail the hold test as an expect diff.
 
 ## Corrections to the Upstream Guidelines
 
