@@ -1,0 +1,4 @@
+(library
+ (name toolkit)
+ (libraries base parallel stdlib_upstream_compatible)
+ (ocamlopt_flags (:standard -O3 -zero-alloc-check all)))

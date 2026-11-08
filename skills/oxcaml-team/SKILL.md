@@ -115,13 +115,19 @@ Checking belongs at compile time, "in front of the programmer and not in front o
 
 ## The OxCaml Toolkit
 
-These are what the principles look like in Jane Street's compiler. Syntax is current as of the `oxcaml/oxcaml` docs (2026-11). Check `oxcaml.org` before relying on details, because extensions carry no stability promise.
+These are what the principles look like in Jane Street's compiler. Every shape in the table is used in `examples/src/toolkit.ml`, which compiles on OxCaml `5.2.0+ox` (2026-11-07). `scripts/gate.sh` also requires four mistakes to be *rejected* by the compiler: a `[@zero_alloc]` function that allocates, a mutable array shared across `fork_join2`, a stack value in tail position, and the non-type `int64_u`. Extensions carry no stability promise, so re-run the gate after upgrading the compiler.
+
+Things the compiler insisted on while writing those examples:
+- **Tail position.** A `stack_` or `exclave_` value passed in tail position is rejected (`an argument in a tail call`). Mark the call `[@nontail]`.
+- **Where the unboxed number modules live.** `Float_u` and `Int64_u` live in `Stdlib_upstream_compatible`, and the type is `int64#`. An earlier version of this table said `int64_u`, which is not a type.
+- **Data races.** Two `fork_join2` tasks reading one mutable `array` is rejected as a data race ("nonportable"). Share an immutable `iarray` instead.
+- **`fork_join2`'s result.** It returns an unboxed pair, so match it with `let #(a, b) = ...`.
 
 | Need | Feature | Shape |
 |---|---|---|
 | Don't let a value escape its scope, so it can live on the stack | Locality modes | `(x : t @ local)`, `stack_ { a; b }`, `exclave_` to allocate in the caller's region |
 | Prove a hot function never touches the GC heap | `[@zero_alloc]` | `let[@zero_alloc] f x y = ...`, checked at compile time, callees included. Local allocations are allowed |
-| Control memory layout / avoid boxing | Unboxed types and layouts | `float#`, `int64_u`, unboxed products `#(a, b)`, layouts like `float64`, `bits64`, `value`, `any`; mixed blocks |
+| Control memory layout / avoid boxing | Unboxed types and layouts | `float#`, `int64#` (operations in `Stdlib_upstream_compatible.Float_u` / `Int64_u`), unboxed products `#(a, b)`, layouts like `float64`, `bits64`, `value`, `any`; mixed blocks |
 | Rule out data races statically | Contention and portability modes | `portable` closures for `Parallel.fork_join2`, `contended` / `shared` / `uncontended`, capsules for shared mutable state |
 | In-place update or single-use resources | Uniqueness and linearity | `unique` / `once` modes |
 | Absence without allocation or nesting confusion | `or_null` | A non-allocating option for non-nullable types |
