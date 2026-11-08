@@ -1,7 +1,15 @@
-# jane-skills
+# jane-got-skills
+
+[![Tip my tokens](https://tokentip.to/badge/copyleftdev.svg?logo=1)](https://tokentip.to/@copyleftdev)
 
 Agent skills and personas built from Jane Street's public technical record:
 talks, papers, open source, and the Signals and Threads podcast.
+
+> **Not affiliated with Jane Street.** This is an independent project. It is not produced,
+> reviewed or endorsed by Jane Street Group, LLC or any of its people. Personas are built only
+> from public material and are not those people speaking. Every quotation is verbatim and
+> sourced; everything else is our synthesis, and derived material is labelled as such.
+> Nothing here is investment advice or a description of Jane Street's actual trading.
 
 - `research/` — sourced dossiers (people, GitHub, papers/talks, public business data)
 - `skills/<name>/SKILL.md` — one skill per directory, Claude Code skill format

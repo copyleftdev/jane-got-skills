@@ -1,6 +1,6 @@
 # Jane Street: papers, books, talks, and published teaching material (source material for agent skills)
 
-Compiled 2026-11-07 for `/home/ops/Project/jane-skills`. Companion to `research/repos.json` (446 `janestreet/*` GitHub repos).
+Compiled 2026-11-07 for this repository. Companion to `research/repos.json` (446 `janestreet/*` GitHub repos).
 
 ## How to read this file
 
