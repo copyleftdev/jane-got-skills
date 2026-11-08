@@ -78,3 +78,9 @@ gh workflow run ci --ref main -f ocaml=true     # about an hour of runner time
 ```
 
 Locally, each code-bearing skill has `scripts/gate.sh [switch]`; see that skill's Verification section.
+
+## License
+
+MIT, see [LICENSE](LICENSE). Two kinds of content keep their own terms:
+- **Vendored Hardcaml agent guidelines** in `skills/hardcaml/references/` are Jane Street's, under their own MIT license (`skills/hardcaml/references/LICENSE.md`).
+- **Quotations** from talks, posts, papers and podcasts are short attributed excerpts. They remain their authors' and publishers' work.
