@@ -9,6 +9,20 @@ talks, papers, open source, and the Signals and Threads podcast.
 Personas encode a person's *published* engineering philosophy. Every principle
 traces to a public source; nothing private is collected.
 
+## Install
+
+```sh
+git clone https://github.com/copyleftdev/jane-got-skills.git && cd jane-got-skills
+./install.sh            # symlink every skill into ~/.claude/skills (or $CLAUDE_SKILLS_DIR)
+./install.sh --list     # status of each skill
+./install.sh minsky memtrace           # only some skills
+./install.sh --uninstall               # remove only this repo's links
+```
+
+The installer never overwrites a real file or directory. It replaces a symlink of the
+same name that points elsewhere only with `--force`. Because the skills are symlinks,
+`git pull` updates them in place. Start a new Claude Code session to pick up new skills.
+
 ## Skills
 
 | Skill | Kind | Grounding | Gate |
@@ -28,8 +42,31 @@ traces to a public source; nothing private is collected.
 Every quotation in a persona must appear verbatim in its public source.
 
 ```sh
-tools/fetch_corpus.sh /tmp/corpus $(cat skills/minsky/sources.txt)
-python3 -I tools/verify_quotes.py /tmp/corpus skills/minsky/SKILL.md   # exit 0 = every quote found
+tools/fetch_corpus.sh /tmp/corpus $(grep -v '^#' skills/minsky/sources.txt)
+python3 -I tools/verify_quotes.py /tmp/corpus skills/minsky/SKILL.md --manual skills/minsky/manual_quotes.tsv
 ```
 
 `fetch_corpus.sh` always includes the Signals and Threads homepage, which embeds every episode transcript.
+
+Every corpus can be fetched automatically except one. The ACM Queue article "OCaml for the Masses"
+sits behind Cloudflare. The 10 Minsky quotes from it are listed in `skills/minsky/manual_quotes.tsv`:
+- **Without that article in the corpus (CI),** they are reported SKIPPED, by name.
+- **With it present as `masses.txt`,** saved from a browser, they are verified like any other quote.
+- **A listed quote that disappears from the skill** fails the gate.
+
+## CI
+
+`.github/workflows/ci.yml` runs in four tiers:
+
+| Job | When | What |
+|---|---|---|
+| `checks` | every push and PR | installer tests, every skill's Python suite, the Hardcaml linter, SKILL.md snippets = compiled code, shellcheck |
+| `quotes` | every push and PR, and weekly | rebuilds every corpus from its live sources and verifies every quote, so upstream changes surface within a week |
+| `ocaml` | manual (`ocaml: true`) | Jane Street v0.17 and `janestreet-bleeding` switches; expect-tests, hardcaml and memtrace gates with their canaries |
+| `oxcaml` | manual (`oxcaml: true`) | builds OxCaml from source; the oxcaml-team gate and the Hardcaml templates A and B |
+
+```sh
+gh workflow run ci --ref main -f ocaml=true     # about an hour of runner time
+```
+
+Locally, each code-bearing skill has `scripts/gate.sh [switch]`; see that skill's Verification section.

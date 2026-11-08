@@ -3,3 +3,5 @@ magic-trace
 https://raw.githubusercontent.com/janestreet/memtrace/master/README.md
 https://www.janestreet.com/tech-talks/safe-at-any-speed/
 https://www.janestreet.com/tech-talks/system-jitter-and-where-to-find-it/
+https://raw.githubusercontent.com/ocaml/ocaml/5.4.0/stdlib/gc.mli::gc_mli.txt
+https://raw.githubusercontent.com/janestreet/memtrace/v0.2.3/src/memtrace.mli::memtrace_mli.txt

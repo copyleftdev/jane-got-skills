@@ -1,0 +1,121 @@
+name: ci
+
+# Tiers, cheapest first:
+#   checks  every push/PR: installer, Python suites, linter, snippet sync, shellcheck (no network)
+#   quotes  every push/PR + weekly: rebuild each corpus from its live sources and verify every quote,
+#           so upstream pages changing under a persona shows up within a week
+#   ocaml   manual: Jane Street v0.17 + janestreet-bleeding switches, compile/run gates with canaries
+#   oxcaml  manual: builds the OxCaml compiler from source (slow), runs the OxCaml gates
+on:
+  push:
+  pull_request:
+  schedule:
+    - cron: "17 6 * * 1"
+  workflow_dispatch:
+    inputs:
+      ocaml:
+        description: "Run the OCaml gates (expect-tests, hardcaml, memtrace); about an hour"
+        type: boolean
+        default: false
+      oxcaml:
+        description: "Build OxCaml and run its gates (hardcaml A/B, oxcaml-team); several hours"
+        type: boolean
+        default: false
+
+permissions:
+  contents: read
+
+jobs:
+  checks:
+    runs-on: ubuntu-24.04
+    timeout-minutes: 15
+    steps:
+      - uses: actions/checkout@v4
+      - name: Installer
+        run: |
+          python3 -I -m unittest discover -s tests -v
+          ./install.sh --list --dir "$RUNNER_TEMP/skills"
+      - name: Skill test suites
+        run: |
+          for t in skills/*/scripts/tests; do
+            echo "::group::$t"
+            python3 -I -m unittest discover -s "$t"
+            echo "::endgroup::"
+          done
+      - name: Hardcaml linter over the examples
+        run: python3 -I skills/hardcaml/scripts/hardcaml_lint.py skills/hardcaml/examples
+      - name: SKILL.md code blocks are the compiled code
+        run: |
+          for s in expect-tests hardcaml memtrace; do
+            python3 -I tools/check_snippets.py "skills/$s/SKILL.md" "skills/$s/examples"
+          done
+      - name: shellcheck
+        run: shellcheck -S warning install.sh tools/*.sh skills/*/scripts/*.sh
+
+  quotes:
+    if: github.event_name != 'workflow_dispatch' || (!inputs.ocaml && !inputs.oxcaml)
+    runs-on: ubuntu-24.04
+    timeout-minutes: 30
+    steps:
+      - uses: actions/checkout@v4
+      - name: pdftotext
+        run: sudo apt-get update -qq && sudo apt-get install -y -qq poppler-utils
+      - name: Rebuild corpora and verify quotes
+        run: |
+          status=0
+          for src in skills/*/sources.txt; do
+            s=$(basename "$(dirname "$src")")
+            [ -f "skills/$s/SKILL.md" ] || continue
+            echo "::group::$s"
+            corpus="$RUNNER_TEMP/corpus_$s"
+            # shellcheck disable=SC2046
+            tools/fetch_corpus.sh "$corpus" $(grep -v '^#' "$src")
+            manual=()
+            [ -f "skills/$s/manual_quotes.tsv" ] && manual=(--manual "skills/$s/manual_quotes.tsv")
+            python3 -I tools/verify_quotes.py "$corpus" "skills/$s/SKILL.md" "${manual[@]}" || status=1
+            echo "::endgroup::"
+          done
+          exit $status
+
+  ocaml:
+    if: github.event_name == 'workflow_dispatch' && inputs.ocaml
+    runs-on: ubuntu-24.04
+    timeout-minutes: 180
+    steps:
+      - uses: actions/checkout@v4
+      - uses: ocaml/setup-ocaml@v3
+        with:
+          ocaml-compiler: "5.4"
+      - name: Jane Street v0.17 libraries (expect-tests gate)
+        run: opam install -y dune core ppx_jane expect_test_helpers_core base_quickcheck
+      - name: expect-tests gate
+        run: skills/expect-tests/scripts/gate.sh "$(opam switch show)"
+      - name: janestreet-bleeding switch (Hardcaml and memtrace v0.18 preview)
+        run: |
+          opam repo add janestreet-bleeding https://github.com/janestreet/opam-repository.git --dont-select
+          opam switch create hardcaml-bleeding --no-switch --repos=janestreet-bleeding,default \
+            --packages=ocaml-base-compiler.5.4.0,dune,hardcaml,hardcaml_waveterm,ppx_hardcaml,core,ppx_jane,ppx_expect,memtrace --yes
+      - name: hardcaml gate
+        run: skills/hardcaml/scripts/gate.sh hardcaml-bleeding
+      - name: memtrace gate
+        run: skills/memtrace/scripts/gate.sh hardcaml-bleeding
+
+  oxcaml:
+    if: github.event_name == 'workflow_dispatch' && inputs.oxcaml
+    runs-on: ubuntu-24.04
+    timeout-minutes: 360
+    steps:
+      - uses: actions/checkout@v4
+      - uses: ocaml/setup-ocaml@v3
+        with:
+          ocaml-compiler: "5.4"
+      - name: OxCaml switch (oxcaml.org instructions)
+        run: |
+          sudo apt-get install -y -qq autoconf
+          opam switch create 5.2.0+ox --no-switch --repos ox=git+https://github.com/oxcaml/opam-repository.git,default --yes
+          OPAMSOLVERTIMEOUT=600 opam install --switch=5.2.0+ox -y parallel core ppx_jane ppx_expect \
+            hardcaml hardcaml_waveterm hardcaml_test_harness hardcaml_lws ppx_hardcaml
+      - name: oxcaml-team gate
+        run: skills/oxcaml-team/scripts/gate.sh 5.2.0+ox
+      - name: hardcaml OxCaml gate (templates A and B)
+        run: skills/hardcaml/scripts/gate_oxcaml.sh 5.2.0+ox

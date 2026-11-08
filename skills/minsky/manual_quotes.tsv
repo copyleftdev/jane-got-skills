@@ -1,0 +1,10 @@
+masses.txt	There is no faster way for a trading firm to destroy itself than to deploy a piece of trading software that makes a bad decision over and over in a tight loop. Part of Jane Street's reaction to these technological risks was to put a very strong focus on building software that was easily understood—software that was readable.
+masses.txt	a couple of the most senior traders (including one of the founders) committed to reading every line of code that went into the core trading systems.
+masses.txt	just what piece of code was actually being invoked when a given method was called
+masses.txt	inheritance ducks under abstraction boundaries.
+masses.txt	a kind of guaranteed-to-be-correct documentation,
+masses.txt	invariants enforced by the type system have the benefit of being more durable than those enforced by convention, in that they are less likely to be broken accidentally by another developer.
+masses.txt	is helpless against many bugs,
+masses.txt	a surprisingly wide swath of bugs … including many bugs that are quite hard to get at through testing.
+masses.txt	A complete commitment to immutability is a commitment to never building anything real.
+masses.txt	Mutation-free code is generally easier to reason about

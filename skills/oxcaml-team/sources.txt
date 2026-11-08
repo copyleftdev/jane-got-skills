@@ -4,3 +4,10 @@ memory-allocator-showdown
 oxidizing-ocaml-locality
 oxidizing-ocaml-ownership
 oxidizing-ocaml-parallelism
+https://raw.githubusercontent.com/oxcaml/oxcaml/main/jane/doc/extensions/_05-modes/intro.md::oxdoc___05-modes_intro.txt
+https://raw.githubusercontent.com/oxcaml/oxcaml/main/jane/doc/extensions/_02-stack-allocation/intro.md::oxdoc___02-stack-allocation_intro.txt
+https://raw.githubusercontent.com/oxcaml/oxcaml/main/jane/doc/extensions/_02-stack-allocation/pitfalls.md::oxdoc___02-stack-allocation_pitfalls.txt
+https://raw.githubusercontent.com/oxcaml/oxcaml/main/jane/doc/extensions/_03-unboxed-types/01-intro.md::oxdoc___03-unboxed-types_01-intro.txt
+https://raw.githubusercontent.com/oxcaml/oxcaml/main/jane/doc/extensions/_01-tutorials/01-intro-to-parallelism-part-1.md::oxdoc___01-tutorials_01-intro-to-parallelism-part-1.txt
+https://raw.githubusercontent.com/oxcaml/oxcaml/main/jane/doc/extensions/_11-miscellaneous-extensions/zero_alloc_check.md::oxdoc___11-miscellaneous-extensions_zero_alloc_check.txt
+https://raw.githubusercontent.com/oxcaml/oxcaml/main/jane/doc/extensions/_07-uniqueness/01-intro.md::oxdoc___07-uniqueness_01-intro.txt
