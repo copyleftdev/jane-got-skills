@@ -13,7 +13,7 @@ python3 -I -m unittest discover -s "$here/scripts/tests" 2>&1 | tail -1
 echo "== lint examples"
 python3 -I "$here/scripts/hardcaml_lint.py" "$here/examples"
 
-echo "== examples: dune runtest ($switch: hardcaml $(opam list --switch="$switch" --installed --short --columns=version hardcaml 2>/dev/null))"
+echo "== examples: dune runtest ($switch: hardcaml $(opam list --color=never --switch="$switch" --installed --short --columns=version hardcaml 2>/dev/null))"
 run "$here/examples" > /dev/null || { run "$here/examples" | head -60; echo "FAIL: examples"; exit 1; }
 
 echo "== snippets"

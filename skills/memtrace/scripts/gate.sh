@@ -7,7 +7,7 @@ here=$(cd "$(dirname "$0")/.." && pwd)
 switch=${1:-hardcaml-bleeding}
 run() { (cd "$1" && timeout 600 nice -n 19 opam exec --switch="$switch" -- dune runtest -j 4 --root . 2>&1); }
 
-version=$(opam list --switch="$switch" --installed --short --columns=version memtrace 2>/dev/null)
+version=$(opam list --color=never --switch="$switch" --installed --short --columns=version memtrace 2>/dev/null)
 case $version in
   v0.18*) ;;
   *) echo "FAIL: switch $switch has memtrace '${version:-none}'; stop_tracing hangs on OCaml >= 5.3 before v0.18"; exit 1 ;;

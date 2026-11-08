@@ -28,7 +28,7 @@ check() {
   return 0
 }
 
-echo "== templates A and B on $(opam exec --switch="$switch" -- ocamlopt -version), hardcaml $(opam list --switch="$switch" --installed --short --columns=version hardcaml 2>/dev/null)"
+echo "== templates A and B on $(opam exec --switch="$switch" -- ocamlopt -version), hardcaml $(opam list --color=never --switch="$switch" --installed --short --columns=version hardcaml 2>/dev/null)"
 rc=0; check "$here/examples" || rc=$?
 [ $rc -eq 0 ] || { echo "FAIL: templates (rc=$rc)"; exit 1; }
 echo "templates A and B pass"
